@@ -164,242 +164,6 @@
         
 
 <div class="post">
-    <a href="/2023/08/23/Coding%20log%208-23-2023/">
-        <h2 class="post-title">Coding log 8-23-2023</h2>
-    </a>
-    <div class="category-and-date">
-        
-        <span class="date">
-            <span class="icon">
-                <i class="fa-solid fa-calendar fa-fw"></i>
-            </span>
-            2023/8/23
-        </span>
-        
-        
-    </div>
-    <div class="description">
-        <div class="content" v-pre>
-            
-            <h1 id="Coding-Log"><a href="#Coding-Log" class="headerlink" title="Coding Log"></a>Coding Log</h1><h6 id="8-23-2023"><a href="#8-23-2023" class="headerlink" title="8&#x2F;23&#x2F;2023"></a>8&#x2F;23&#x2F;2023</h6><p>Today I was diving to a problem in CodeForce. Maybe because of my curiosity, I had a try in this problem named <em>Not a Substring</em>, which I shouldn’t touch.<br><img src="/Coding%20log%208-23-2023/image.png" alt="Alt text"></p>
-<h2 id="Thinking-Path"><a href="#Thinking-Path" class="headerlink" title="Thinking Path"></a>Thinking Path</h2><p>At the beginning, my thinking was brackets matching because I learnt how to match brackets using stack few days ago.</p>
-<pre><code class="C++">bool isValid(string str)
-&#123;
-    stack&lt;char&gt; stk;
-    for (auto i : str)
-    &#123;
-        if (i == &#39;(&#39;)
-        &#123;
-            stk.push(i);
-        &#125;
-        else if (i == &#39;)&#39; &amp;&amp; !stk.empty())
-        &#123;
-            if (stk.top() == &#39;)&#39;)
-                return false;
-            stk.pop();
-        &#125;
-        else if (i == &#39;)&#39; &amp;&amp; stk.empty())
-        &#123;
-            return false;
-        &#125;
-        return stk.empty();
-    &#125;
-&#125;
-</code></pre>
-<p>How to use this function? Of course list all of possible situations of “(“and”)”. Then using this function to check all of situations and leave the valid ones.</p>
-<pre><code class="C++">void generator(int left, int right, string current, vector&lt;string&gt; &amp;result)
-&#123;
-    if (left == 0 &amp;&amp; right == 0)
-    &#123;
-        if(!isValid(current))   //useless
-            return; 
-        result.push_back(current);
-        return;
-    &#125;
-
-    if (left &gt; 0)
-    &#123;
-        generator(left - 1, right, current + &quot;(&quot;, result);
-    &#125;
-
-    if (right &gt; left)
-    &#123;
-        generator(left, right - 1, current + &quot;)&quot;, result);
-    &#125;
-&#125;
-
-vector&lt;string&gt; generator(int n)
-&#123;
-    vector&lt;string&gt; result;
-    generator(n, n, &quot;&quot;, result);
-    return result;
-&#125;
-</code></pre>
-<p>Classic DFS. However, after testing, I found the brackets matching was useless. Because through this DFS, generated brackets strings must be valid.<br><img src="/Coding%20log%208-23-2023/image-1.png" alt="Alt text"><br>Anyway, the brackets strings had been generated. The next step is just find if the input is a substring of generated strings.</p>
-<pre><code class="C++">bool isSubstring(const std::string&amp; sub, const std::string&amp; main) &#123;
-    int i = 0;
-    int j = 0;
-
-    while (i &lt; main.size()) &#123;
-        if (main[i] == sub[j]) &#123;
-            j++;
-
-            if (j == sub.size()) &#123;
-                return true; // Substring found
-            &#125;
-        &#125; else &#123;
-            i = i - j + 1;
-            j = 0;
-        &#125;
-
-        i++;
-    &#125;
-
-    return false; // Substring not found
-&#125;
-</code></pre>
-<p>DanDan! Success is coming soon, the last step is easy, just call above functions in main function.</p>
-<pre><code class="C++">int main()
-&#123;
-    int lines;
-    cin &gt;&gt; lines;
-
-    vector&lt;string&gt; v(lines);
-
-    for (int i = 0; i &lt; lines; ++i)
-    &#123;
-        string input;
-        cin &gt;&gt; input;
-        v[i] = input;
-    &#125;
-    for (auto sub : v)
-    &#123;
-        auto container = generator(sub.length());
-        string result;
-        bool isSub = true;
-        for (auto main : container)
-        &#123;
-            if (!isSubstring(sub, main))
-            &#123;
-                result = main;
-                isSub = false;
-                break;
-            &#125;
-        &#125;
-        if (isSub)
-        &#123;
-            cout &lt;&lt; &quot;NO&quot; &lt;&lt; endl;
-        &#125;
-        else
-        &#123;
-            cout &lt;&lt; &quot;YES&quot; &lt;&lt; endl;
-            cout &lt;&lt; result &lt;&lt; endl;
-        &#125;
-    &#125;
-
-    system(&quot;pause&quot;);
-    return 0;
-&#125;
-</code></pre>
-<p>Input the example and then… success!!!!<br><img src="/Coding%20log%208-23-2023/image-2.png" alt="Alt text"></p>
-<h2 id="Big-Fall"><a href="#Big-Fall" class="headerlink" title="Big Fall"></a>Big Fall</h2><p>When I submitted with laugher, the fact hit me a lot. Time out of limit!<br><img src="/Coding%20log%208-23-2023/image-3.png" alt="Alt text"></p>
-<p>To be honest, this is in my consideration. The time complication of my code is O(2^n). I didn’t lost my belief. I tried to improve my match algorithm to KMP pattern searching.</p>
-<pre><code class="C++">void getNext(vector&lt;int&gt; &amp;next, string &amp;sub)
-&#123;
-    next[0] = 0;
-    int x = 1;
-    int now = 0;
-
-    while (x &lt; sub.length())
-    &#123;
-        if (sub[now] == sub[x])
-        &#123;
-            now += 1;
-            next[x] = now;
-            x += 1;
-        &#125;
-        else if (now)
-        &#123;
-            now = next[now - 1];
-        &#125;
-        else
-        &#123;
-            next[x] = 0;
-            x += 1;
-        &#125;
-    &#125;
-&#125;
-
-bool isSubstring(string &amp;sub, string &amp;main)
-&#123;
-    vector&lt;int&gt; next(sub.length());
-    getNext(next, sub);
-
-    int i = 0;
-    int j = 0;
-    while (i &lt; main.length())
-    &#123;
-        if (main[i] == sub[j])
-        &#123;
-            i++;
-            j++;
-            if (j == sub.length())
-                return true;
-        &#125;
-        else if (j)
-        &#123;
-            j = next[j - 1];
-        &#125;
-        else
-        &#123;
-            i += 1;
-        &#125;
-    &#125;
-    return false;
-&#125;
-</code></pre>
-<p>However, from O(N*M) to O(N+M), do not influence the O(2^n) of DFS. Finally, I read the official answer and shocked me. So simple and perfect.</p>
-<pre><code class="C++">#include &lt;bits/stdc++.h&gt;
- 
-using namespace std;
- 
-int main() &#123;
-  ios::sync_with_stdio(false); cin.tie(0);
-  int t;
-  cin &gt;&gt; t;
-  while (t--) &#123;
-    string s;
-    cin &gt;&gt; s;
-    int n = s.size();
-    string a, b;
-    for (int i = 0; i &lt; 2 * n; ++i) &#123;
-      a += &quot;()&quot;[i &amp; 1];
-      b += &quot;)(&quot;[i &lt; n];
-    &#125;
-    if (a.find(s) == string::npos) &#123;
-      cout &lt;&lt; &quot;YES\n&quot; &lt;&lt; a &lt;&lt; &#39;\n&#39;;
-    &#125; else if (b.find(s) == string::npos) &#123;
-      cout &lt;&lt; &quot;YES\n&quot; &lt;&lt; b &lt;&lt; &#39;\n&#39;;
-    &#125; else &#123;
-      cout &lt;&lt; &quot;NO\n&quot;;
-    &#125;
-  &#125;
-&#125;
-</code></pre>
-<p>Maybe it’s why there is a great gab between me normal person and genius.😭😭😭</p>
-
-            
-        </div>
-    </div>
-    <div class="post-tags">
-        
-        
-        
-    </div>
-    <a href="/2023/08/23/Coding%20log%208-23-2023/" class="go-post">阅读全文</a>
-</div>
-
-<div class="post">
     <a href="/2023/08/23/Coding-log-8-23-2023/">
         <h2 class="post-title">Coding log 8-23-2023</h2>
     </a>
@@ -417,7 +181,7 @@ int main() &#123;
     <div class="description">
         <div class="content" v-pre>
             
-            <h1 id="Coding-Log"><a href="#Coding-Log" class="headerlink" title="Coding Log"></a>Coding Log</h1><h6 id="8-23-2023"><a href="#8-23-2023" class="headerlink" title="8&#x2F;23&#x2F;2023"></a>8&#x2F;23&#x2F;2023</h6><p>Today I was diving to a problem in CodeForce. Maybe because of my curiosity, I had a try in this problem named <em>Not a Substring</em>, which I shouldn’t touch.<br><img src="/Coding-log-8-23-2023/image.png" alt="Alt text"></p>
+            <h1 id="Coding-Log"><a href="#Coding-Log" class="headerlink" title="Coding Log"></a>Coding Log</h1><h6 id="8-23-2023"><a href="#8-23-2023" class="headerlink" title="8&#x2F;23&#x2F;2023"></a>8&#x2F;23&#x2F;2023</h6><p>Today I was diving to a problem in CodeForce. Maybe because of my curiosity, I had a try in this problem named <em>Not a Substring</em>, which I shouldn’t touch.<br><img src="/2023/08/23/Coding-log-8-23-2023/image.png" alt="Alt text"></p>
 <h2 id="Thinking-Path"><a href="#Thinking-Path" class="headerlink" title="Thinking Path"></a>Thinking Path</h2><p>At the beginning, my thinking was brackets matching because I learnt how to match brackets using stack few days ago.</p>
 <pre><code class="C++">bool isValid(string str)
 &#123;
@@ -471,7 +235,7 @@ vector&lt;string&gt; generator(int n)
     return result;
 &#125;
 </code></pre>
-<p>Classic DFS. However, after testing, I found the brackets matching was useless. Because through this DFS, generated brackets strings must be valid.<br><img src="/Coding-log-8-23-2023/image-1.png" alt="Alt text"><br>Anyway, the brackets strings had been generated. The next step is just find if the input is a substring of generated strings.</p>
+<p>Classic DFS. However, after testing, I found the brackets matching was useless. Because through this DFS, generated brackets strings must be valid.<br><img src="/2023/08/23/Coding-log-8-23-2023/image-1.png" alt="Alt text"><br>Anyway, the brackets strings had been generated. The next step is just find if the input is a substring of generated strings.</p>
 <pre><code class="C++">bool isSubstring(const std::string&amp; sub, const std::string&amp; main) &#123;
     int i = 0;
     int j = 0;
@@ -537,8 +301,8 @@ vector&lt;string&gt; generator(int n)
     return 0;
 &#125;
 </code></pre>
-<p>Input the example and then… success!!!!<br><img src="/Coding-log-8-23-2023/image-2.png" alt="Alt text"></p>
-<h2 id="Big-Fall"><a href="#Big-Fall" class="headerlink" title="Big Fall"></a>Big Fall</h2><p>When I submitted with laugher, the fact hit me a lot. Time out of limit!<br><img src="/Coding-log-8-23-2023/image-3.png" alt="Alt text"></p>
+<p>Input the example and then… success!!!!<br><img src="/2023/08/23/Coding-log-8-23-2023/image-2.png" alt="Alt text"></p>
+<h2 id="Big-Fall"><a href="#Big-Fall" class="headerlink" title="Big Fall"></a>Big Fall</h2><p>When I submitted with laugher, the fact hit me a lot. Time out of limit!<br><img src="/2023/08/23/Coding-log-8-23-2023/image-3.png" alt="Alt text"></p>
 <p>To be honest, this is in my consideration. The time complication of my code is O(2^n). I didn’t lost my belief. I tried to improve my match algorithm to KMP pattern searching.</p>
 <pre><code class="C++">void getNext(vector&lt;int&gt; &amp;next, string &amp;sub)
 &#123;
