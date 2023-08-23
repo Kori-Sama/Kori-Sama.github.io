@@ -161,7 +161,7 @@
     </div>
     
     <div class="content" v-pre>
-        <h1 id="Coding-Log"><a href="#Coding-Log" class="headerlink" title="Coding Log"></a>Coding Log</h1><h6 id="8-23-2023"><a href="#8-23-2023" class="headerlink" title="8&#x2F;23&#x2F;2023"></a>8&#x2F;23&#x2F;2023</h6><p>Today I was diving to a problem in CodeForce. Maybe because of my curiosity, I had a try in this problem named <em>Not a Substring</em>, which I shouldn’t touch.<br><img src="/image.png" alt="Alt text"></p>
+        <h1 id="Coding-Log"><a href="#Coding-Log" class="headerlink" title="Coding Log"></a>Coding Log</h1><h6 id="8-23-2023"><a href="#8-23-2023" class="headerlink" title="8&#x2F;23&#x2F;2023"></a>8&#x2F;23&#x2F;2023</h6><p>Today I was diving to a problem in CodeForce. Maybe because of my curiosity, I had a try in this problem named <em>Not a Substring</em>, which I shouldn’t touch.<br><img src="/Coding%20log%208-23-2023/image.png" alt="Alt text"></p>
 <h2 id="Thinking-Path"><a href="#Thinking-Path" class="headerlink" title="Thinking Path"></a>Thinking Path</h2><p>At the beginning, my thinking was brackets matching because I learnt how to match brackets using stack few days ago.</p>
 <pre><code class="C++">bool isValid(string str)
 &#123;
@@ -215,7 +215,7 @@ vector&lt;string&gt; generator(int n)
     return result;
 &#125;
 </code></pre>
-<p>Classic DFS. However, after testing, I found the brackets matching was useless. Because through this DFS, generated brackets strings must be valid.<br><img src="/image-1.png" alt="Alt text"><br>Anyway, the brackets strings had been generated. The next step is just find if the input is a substring of generated strings.</p>
+<p>Classic DFS. However, after testing, I found the brackets matching was useless. Because through this DFS, generated brackets strings must be valid.<br><img src="/Coding%20log%208-23-2023/image-1.png" alt="Alt text"><br>Anyway, the brackets strings had been generated. The next step is just find if the input is a substring of generated strings.</p>
 <pre><code class="C++">bool isSubstring(const std::string&amp; sub, const std::string&amp; main) &#123;
     int i = 0;
     int j = 0;
@@ -281,8 +281,8 @@ vector&lt;string&gt; generator(int n)
     return 0;
 &#125;
 </code></pre>
-<p>Input the example and then… success!!!!<br><img src="/image-2.png" alt="Alt text"></p>
-<h2 id="Big-Fall"><a href="#Big-Fall" class="headerlink" title="Big Fall"></a>Big Fall</h2><p>When I submitted with laugher, the fact hit me a lot. Time out of limit!<br><img src="/image-3.png" alt="Alt text"></p>
+<p>Input the example and then… success!!!!<br><img src="/Coding%20log%208-23-2023/image-2.png" alt="Alt text"></p>
+<h2 id="Big-Fall"><a href="#Big-Fall" class="headerlink" title="Big Fall"></a>Big Fall</h2><p>When I submitted with laugher, the fact hit me a lot. Time out of limit!<br><img src="/Coding%20log%208-23-2023/image-3.png" alt="Alt text"></p>
 <p>To be honest, this is in my consideration. The time complication of my code is O(2^n). I didn’t lost my belief. I tried to improve my match algorithm to KMP pattern searching.</p>
 <pre><code class="C++">void getNext(vector&lt;int&gt; &amp;next, string &amp;sub)
 &#123;
